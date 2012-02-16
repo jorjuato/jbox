@@ -1,0 +1,36 @@
+# /usr/share/live/build/lists/jbox - package list for live-helper(7)
+
+# LB: Full JBox configuration
+
+#include <openbox>
+#include <system-tools>
+
+# graphical sys admin
+synaptic bum
+
+# Internet stuff
+iceweasel transmission amule xtightvncviewer
+
+# Commonly used graphical applications,
+vlc gimp xarchiver unzip arj bzip2 epdfview brasero geany zim
+openoffice.org-writer openoffice.org-calc openoffice.org-impress openoffice.org-gtk
+debian-multimedia-keyring
+
+# Printing
+cups cups-driver-gutenprint hplip
+
+# Video edition soft with huge dependencies!
+# Prepare almost 100 MB and more than 700MB of total size: remove anything or no possible CD image
+# (kino and dvdrip/transcode broken on sid!!)
+sound-juicer soundconverter pitivi avidemux
+
+# Laptop specific packages
+laptop-mode-tools pm-utils acpi-support acpid acpi sleepd hibernate sdparm powertop
+
+#if ARCHITECTURE amd64
+ia32-libs
+#endif
+
+#if ARCHIVE_AREAS contrib non-free
+ttf-mscorefonts-installer flashplugin-nonfree rar unrar unace-nonfree
+#endif

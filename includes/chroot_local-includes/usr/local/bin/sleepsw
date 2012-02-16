@@ -1,0 +1,16 @@
+#!/bin/bash
+
+STATUS=$(sleepctl status)
+
+if [ "$STATUS" = "sleeping enabled" ]; then
+{
+        sleepctl off;
+        notify-send "Disabling sleep daemon" -u low -t 1500
+}
+else
+{
+        sleepctl on;
+        notify-send "Enabling sleep daemon" -u low -t 1500
+}
+fi
+

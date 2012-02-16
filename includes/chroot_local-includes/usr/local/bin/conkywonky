@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ "$(pidof conky)" ]; then
+    killall conky
+    conky -q
+    exit
+else
+    conky -q
+    exit
+fi

@@ -1,0 +1,5 @@
+# This is a configuration file for /etc/init.d/sleepd.
+
+# Parameters to pass to sleepd.
+PARAMS="-u 300 -a -b 2 -l 0.10 -d pm-hibernate"
+#

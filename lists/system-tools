@@ -1,0 +1,25 @@
+# /usr/share/live/build/lists/system-tools - package list for live-helper(7)
+
+# LB: Common set of system tools
+
+# Network tools
+whois traceroute nmap ssh denyhosts
+
+# Disk tools
+ntfs-3g ntfsprogs reiserfsprogs parted testdisk sshfs sysfsutils dosfstools hfsplus hfsutils
+partimage kpartx safecopy gparted mbr
+
+# Propietary firmwares. Some of them doesn't exit in lenny. 
+# Packaging of firmwares will change in near future...
+firmware-linux 
+
+#if ARCHIVE_AREAS contrib non-free
+linux-wlan-ng-firmware firmware-ralink bluez-firmware b43-fwcutter
+libertas-firmware firmware-iwlwifi firmware-intelwimax 
+zd1211-firmware firmware-qlogic firmware-bnx2 firmware-bnx2x firmware-brcm80211 
+#endif
+
+# firmware-ipw2x00 removed for unconfortable question
+
+# Non existent!!
+# aircrack-ng  firmware-bnx openntpd

@@ -1,0 +1,157 @@
+#!/bin/bash
+
+######################################################
+#          LIVE SYSTEM BUILD CONFIGURATION           #
+######################################################
+
+##########################################################################
+LANG="spanish"                              #
+LOCALE="es_ES.UTF-8"                        #
+LAYOUT="es"                                 #
+##########################################################################
+USERNAME="user"                             #
+HOSTNAME="jbox"                             #
+##########################################################################
+LIST="jbox"                                 # See files in lists directory
+ARCH="i386"                                 # i386  | amd64
+KERNEL_FLAVOUR="486"                        # 486 | 686 | 686-bigmem | amd64
+###########################################################################
+USE_NON_FREE_HOOKS="true"                   # true | false, see README for an explanation
+DIST="squeeze"                              # lenny | squeeze | sid
+CATEGORIES="main contrib non-free"          # main | contrib | non-free
+MIRROR="http://ftp.fr.debian.org/debian/"   # change to your best option: http://www.debian.org/mirror/list
+BACKPORTS="true"                            #
+BOOTSTRAP="debootstrap"                     # cdebootstrap | cdebootstrap-static | debootstrap | copy
+BS_FLAVOUR="standard"                       # minimal | standard
+BOOT="iso-hybrid"                           # iso | iso-hybrid | net | tar | usb-hdd
+APT_RECOMMENDS="false"                      # true | false
+INSTALLER="live"                            # enabled | cdrom | netinst | netboot | businesscard | live | disabled
+INSTALLER_DIST="squeeze"                    # lenny | squeeze | sid | daily
+INSTALLER_GUI="false"                       # true | false
+ENCRIPTION="false"                          # false | aes128 | aes192 | aes256
+SECURITY="true"                             # true | false
+ROOT=$(pwd)         
+##########################################################################
+#if [ $DIST = "squeeze" ]; then
+    #SECURITY="true"
+#else
+    #SECURITY="false"
+#fi
+
+
+
+######################################################
+#           LIVE SYSTEM BUILD                        #
+######################################################
+
+
+##########################################################################
+# Prepare host system
+##########################################################################
+echo
+echo "============================================"
+echo "Preparing host system..."
+apt-get update -qq 2>/dev/null
+aptitude safe-upgrade 2>/dev/null
+apt-get install --yes live-helper -qq 2>/dev/null
+
+
+##########################################################################
+# Setup chroot system
+##########################################################################
+
+#
+# Clean previous installation attemps
+#
+echo "Clean previous installation attemps"
+rm -r build ; mkdir build; cd build
+mkdir -p $ROOT/build 2> /dev/null; 
+mkdir -p $ROOT/build/auto 2> /dev/null
+
+#
+# Create a basic configuration tree
+#
+#cd $ROOT/build && lb clean
+cp /usr/share/live/build/examples/auto/* $ROOT/build/auto/
+cd $ROOT/build && lb config
+
+#
+# PACKAGES LISTS
+#
+#cp $ROOT/lists/*   $ROOT/build/config/chroot_local-packageslists
+cp $ROOT/lists/*   /usr/share/live/build/lists/
+
+#
+# REPOSITORIES
+#
+echo "deb http://debian-multimedia.gnali.org stable main"                         >  $ROOT/build/config/chroot_sources/custom_sources.chroot
+cp $ROOT/build/config/chroot_sources/custom_sources.chroot $ROOT/build/config/chroot_sources/custom_sources.binary
+
+#
+# LOCAL PACKAGES
+#
+cp $ROOT/localdebs/*.deb  $ROOT/build/config/chroot_local-packages/ 2>/dev/null
+
+#
+# INCLUDES AND LOCALIZATION...
+#
+cp -Rfp $ROOT/includes/*  $ROOT/build/config/
+echo "NODM_USER=$USERNAME"   >> $ROOT/build/config/chroot_local-includes/etc/default/nodm
+echo "Language=$LOCALE"      >> $ROOT/build/config/chroot_local-includes/etc/skel/.dmrc
+echo "$LAYOUT"               >  $ROOT/build/config/chroot_local-includes/etc/skel/.Xkbmap
+#echo "LANG=\"$LOCALE\""      >  $ROOT/build/config/chroot_local-includes/etc/default/locale
+#echo "XKBLAYOUT=\"$LAYOUT\"" >> $ROOT/build/config/chroot_local-includes/etc/default/console-setup
+
+#
+# HOOKS
+#
+cp -p $ROOT/hooks/base/*        $ROOT/build/config/chroot_local-hooks/ 2>/dev/null
+cp -p $ROOT/hooks/$DIST/*       $ROOT/build/config/chroot_local-hooks/ 2>/dev/null
+if [ $USE_NON_FREE_HOOKS = "true" ]; then
+    cp -p $ROOT/hooks/non-free/*    $ROOT/build/config/chroot_local-hooks/ 2>/dev/null
+fi
+
+#
+# And finally, the commands for configuring build process
+#
+lb config --architecture $ARCH -k $KERNEL_FLAVOUR --distribution $DIST >/dev/null
+lb config --apt aptitude --apt-recommends $APT_RECOMMENDS  --binary-indices false >/dev/null
+lb config --bootstrap $BOOTSTRAP --bootstrap-flavour $BS_FLAVOUR >/dev/null
+lb config --mirror-chroot $MIRROR --mirror-binary $MIRROR --mirror-bootstrap $MIRROR >/dev/null
+lb config --keyring-packages "debian-multimedia-keyring" --archive-areas "$CATEGORIES" >/dev/null
+lb config --backports $BACKPORTS >/dev/null
+lb config --bootloader syslinux --memtest false -b $BOOT >/dev/null
+lb config --bootappend-live "locales=$LOCALE keyboard-layouts=$LAYOUT persistent" >/dev/null
+lb config --binary-filesystem fat32  --encryption $ENCRIPTION >/dev/null
+lb config --debian-installer $INSTALLER >/dev/null
+lb config --debian-installer-distribution $INSTALLER_DIST >/dev/null
+lb config --debian-installer-gui $INSTALLER_GUI >/dev/null
+lb config --username $USERNAME --hostname $HOSTNAME >/dev/null
+lb config --tasks "$LANG $LANG-desktop" --language $LAYOUT >/dev/null
+lb config --packages-lists $LIST
+
+#
+# BUILD IMAGE
+#
+lb build
+
+#
+# RENAME IMAGE
+#
+if [ $BOOT = "iso-hybrid" ]; then
+    IMAGENAME=$DIST"-"$KERNEL_FLAVOUR"-ldcb.iso"
+    IMAGESOURCE="binary-hybrid.iso"
+elif [ $BOOT = "usb-hdd" ]; then
+    IMAGENAME=$DIST"-"$KERNEL_FLAVOUR"-ldcb.img"
+    IMAGESOURCE="binary.img"
+elif [ $BOOT = "iso" ]; then
+    IMAGENAME=$DIST"-"$KERNEL_FLAVOUR"-ldcb.iso"
+    IMAGESOURCE="binary.iso"
+elif [ $BOOT = "net" ]; then
+    IMAGENAME=$DIST"-"$KERNEL_FLAVOUR"-ldcb.iso"
+    IMAGESOURCE="binary.iso"
+elif [ $BOOT = "tar" ]; then
+    IMAGENAME=$DIST"-"$KERNEL_FLAVOUR"-ldcb.tgz"
+    IMAGESOURCE="binary.tgz"    
+fi
+mv $IMAGESOURCE $ROOT/images/$IMAGENAME

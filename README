@@ -1,0 +1,103 @@
+HOW TO USE THE SCRIPT:
+-1) Read the WHOLE file please, its name is not a mere coincidence! Specially the Known Issues.
+
+ 0) For Ubuntu users, you need to set up a debian chroot first:
+ 	su
+	debootstrap --arch i386 sid ./sid-root http://ftp.us.debian.org/debian #Choose nearest mirror.
+	mv /pathto/crunch-debianlive sid-root
+	mount  -o bind /proc sid-root/proc
+	mount  -o bind /dev sid-root/dev
+	chroot sid-root
+	cd crunch-debianlive
+	
+ 1) Read the script "ldcb" and adapt important configurations to suit your needs. Ensure you have enough
+    free space to complete build process (up to 2GB), and partition isn't mounted noexec or nodev
+ 	
+ 2) Build (Can take a couple of hours, depending on computer and conection speed)
+    	./ldcb       (AS ROOT)
+    	
+ 2.b) If build process fails without errors you may need to retry:
+ 	cd build
+ 	sudo lh_build (now image appears as binary.img in working dir)
+ 
+ 3.a) Write to USB (all data will be lost in the device!! be carefull!):
+    	dd if=images/[distrib]-ldcb.img of=/dev/sdX bs=1M    (AS ROOT)
+
+ 3.b) Enable persistency in usb drive (optional):
+        fdisk /dev/sdX (and create a new primary partition)
+        partprobe      (just in case kernel doesn't reread the new partition table, ie, cannot access to new partition)
+        mkfs.ext2 -L live-rw /dev/sdX2
+ 
+ 4) Reboot and choose boot option Live
+ 
+ 5) Customizing
+   -Tweaking it is quite easy by just changing variables at the beggining of the script 'ldcb'.
+    Most interesting ones are the architecture, the distribution, the installer and the language.
+    Also bootline is an important setup for the live image. Customize it to suit your needs.
+    
+   -To see full package list used see ./lists/crunchbang and hooks for your distribution and base.
+    For customizing program's behaviour have a look at ./includes/chroot_local-includes/etc/
+    
+   -Flash non-free is installed because of yet obvious performance problems in both 
+    gnash and sfwdec. If non-free drivers like nvidia are required, please, look at ./hooks/opt 
+    directory and copy the one needed in ./hooks/base, so it will be accesible to any 
+    distribution built. If no hook exists for you, please, figure out from the examples how to build
+    yours. It's relatively easy when you know how to do it manually, though might need testing for
+    completely automating the process.
+
+
+FILES IN THE ARCHIVE:
+  ./README
+  ./ldcb       : live debian-based crunchbang main script. Tweak configuration here.
+  ./includes   : directory hierarchies which will be copied to both the new system and the binary image
+  ./hooks      : scripts to execute during build process, after installing all packages in lists
+  ./lists      : lists that contain all packages to be installed.
+  ./localdebs  : directory that contain local packages, as custom kernel or non official ones.
+  ./images     : stores built images.
+  ./build      : working directory. Will be created if not exists.
+
+CHANGELOG:
+ 28/Sep/2009: Fixed some errors on amd64, now builds without no problem 
+              (running kernel must support amd64 instructions). 
+              Non-free hooks have been moved to non-free directory. If you want them, you must
+              set this option in configuration variables.
+              Openoffice is not included by default, just add 
+ 26/Sep/2009: Apparently, ALL configuration issues are solved for Sid 
+              (should apply also to the rest, not tested). Openbox menu rearranged.
+ 25/Sep/2009: Solved all problems with locales and other minor configuration issues.
+ 22/Sep/2009: Tried solving installation to hdd, needs the sid debian installer.
+              Method explained at http://lists.debian.org/debian-live/2009/08/msg00029.html
+              Disabled because it's not working properly.
+ 21/Sep/2009: First full version is out! Bugs will appear soon...
+
+
+KNOWN ISSUES:
+- Sometimes, script fails to build image. Try cd-ing to build dir and enter 'lh_build' as root.
+  It can be necessary a couple of times.
+- Live usb image tends to mount local partitions in the future, so after rebooting, a fsck
+  is oblied. I've tried to solve it to no avail yet.
+- Debootstrap tends to fail quite often when targeting unstable distribution, and from time to time
+  when targeting testing distribution as well.
+- Failure on debian installer when booting from usblive. USB images cannot be installed to hard disk 
+  yet. Use cdrom (iso) images instead.
+- Qemu definitively doesn't like working with openbox and Xorg reboots after starting openbox session.
+  This might be related with Xorg visual  modes configuration, but never tried to configure. This
+  distribution is not meant to be virtualized, though would be good for debugging.
+- As of today, mplayer and vlc are broken on sid and squeeze, so totem is installed instead.
+- KMS enabled kernels fail to boot, kernel oops just when generating AUFS rootfilesystem.
+  When installed on hard disk same kernel for intel chips works OK.
+
+
+TODO:
+ -Add Zenity support for graphical user customization.
+ -Make a short manual of utilities easily accesible, like Super-h.
+  Now, just read configuration files accesible from desktop menu
+  by typing Super-Espace or in /etc/skel
+ -Improve system-update script to make it update package lists
+  in background and only suggest upgrading if it's really necesary.
+  A notification message is also a good idea instead of terminal based,
+  so Zenity can be an easy and handy option.
+ -Improve rebuilding process, as now build directory is removed
+  between different builds and keeping cache dir would be a good
+  time saving.
+

@@ -1,0 +1,110 @@
+# set to yes if you want Conky to be forked in the background
+background yes
+
+# Use Xft?
+use_xft yes
+
+# Xft font when Xft is enabled
+xftfont Trebuchet MS:size=14
+#xftfont Sans:size=8
+
+# Text alpha when using Xft
+xftalpha 1
+
+# Update interval in seconds
+update_interval 10.0
+
+# This is the number of times Conky will update before quitting.
+# Set to zero to run forever.
+total_run_times 0
+
+own_window yes
+own_window_transparent yes
+#own_window_type override
+own_window_type desktop
+#own_window_type normal #use this if you want a nice shadow to appear around conky
+
+# If own_window is yes, these window manager hints may be used
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+
+# Use double buffering (reduces flicker, may not work for everyone)
+double_buffer yes
+
+# Minimum size of text area
+minimum_size 300 600
+
+# Maximum width
+maximum_width 400
+
+# Draw shades?
+draw_shades yes
+
+# Draw outlines?
+draw_outline yes
+
+# Draw borders around text
+draw_borders no
+
+# Draw borders around graphs
+draw_graph_borders no
+
+# Stippled borders?
+# stippled_borders 8
+
+# border margins
+# border_margin 2
+
+# border width
+# border_width 1
+
+# Default colors and also border colors
+default_color white
+default_shade_color black
+default_outline_color white
+
+# Text alignment, other possible values are commented
+alignment top_left
+#alignment top_right
+#alignment bottom_left
+#alignment bottom_right
+#alignment none
+
+# Gap between borders of screen and text
+# same thing as passing -x at command line
+gap_x 12
+gap_y 12
+
+# Subtract file system buffers from used memory?
+no_buffers yes
+
+# set to yes if you want all text to be in uppercase
+uppercase no
+
+# number of cpu samples to average
+# set to 1 to disable averaging
+cpu_avg_samples 2
+
+# Force UTF8? note that UTF8 support required XFT
+override_utf8_locale no
+
+TEXT
+
+SHORTCUT KEYS:
+${hr}
+Alt+F2$alignr Run Dialog
+Alt+F3$alignr Search command
+Win+Espace$alignr Openbox Menu
+Win+d$alignr Show Desktop
+Win+x$alignr Exit Menu
+Win+k$alignr Kill app
+Win+t$alignr Terminal
+Win+f$alignr File Manager
+Win+e$alignr Editor
+Win+m$alignr Media Player
+Win+c$alignr Music Player
+Win+w$alignr Web Browser
+Win+g$alignr Graphics Editor
+Win+o$alignr OpenOffice.org
+Win+v$alignr Volume Control
+PrtSc$alignr Screenshot
+

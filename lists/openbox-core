@@ -1,0 +1,12 @@
+# /usr/share/live/build/lists/openbox-core - package list for live-helper(7)
+
+# LH: Minimal CrunchBang like configuration
+
+#include <standard-x11>
+
+nodm openbox openbox-themes obconf obmenu lxappearance
+
+menu xterm desktop-base 
+
+debian-installer-launcher
+

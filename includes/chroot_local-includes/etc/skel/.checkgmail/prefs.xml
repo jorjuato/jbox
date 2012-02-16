@@ -1,0 +1,16 @@
+<opt archive_as_read="0"
+     atomfeed_address="mail.google.com/mail/feed/atom"
+     background="1D460C"
+     delay="120000"
+     gmail_command="x-www-browser %u"
+     language="English"
+     nomail_command=""
+     notify_command=""
+     passwd=""
+     popup_delay="6000"
+     save_passwd="1"
+     show_popup_delay="250"
+     time_24="0"
+     user="">
+  <label_delay></label_delay>
+</opt>

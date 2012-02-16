@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# Print help
+#===============================================================================
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage:"
+    echo "  -i, --interactive       run system update"
+    echo "  -n, --non-interactive   run system update and only prompt"
+    echo "                          for root password"
+    echo "  -f, --full              run full system update including"
+    echo "                          any Kernel upgrades"
+    echo "  -h, --help              show this message and exit"
+    echo ""
+    exit
+fi
+
+# Run interactive update
+#===============================================================================
+if [ "$1" = "-i" ] || [ "$1" = "--interactive" ]; then
+    exec x-terminal-emulator --command="system-update --upgrade"
+fi
+
+if [ "$1" = "--upgrade" ]; then
+    sleep 2
+    echo "You are about to perform a system upgrade."
+    echo -n "Do you wish to continue? (Y|n) > "
+    read a
+    if [ "$a" = "y" ] || [ "$a" = "Y" ] || [ "$a" = "" ]; then
+        sudo apt-get update
+        sudo apt-get upgrade
+        echo ""
+        echo "-- System update complete! Exiting..."
+        sleep 4s
+        exit
+    fi
+fi
+
+# Run non-interactive update
+#===============================================================================
+if [ "$1" = "-n" ] || [ "$1" = "--non-interactive" ]; then
+    exec x-terminal-emulator --command="system-update --upgrade-now"
+    exit
+fi
+if [ "$1" = "--upgrade-now" ]; then
+    sleep 2
+    echo "Performing a system upgrade..."
+    sudo apt-get update
+    sudo apt-get -y upgrade
+    echo ""
+    echo "-- System update complete! Exiting..."
+    sleep 4s
+    exit
+fi
+
+# Run full update including any Kernel updates
+#===============================================================================
+if [ "$1" = "-f" ] || [ "$1" = "--full" ]; then
+    exec x-terminal-emulator --command="system-update --dist-upgrade"
+    exit
+fi
+if [ "$1" = "--dist-upgrade" ]; then
+    sleep 2
+    echo "You are about to perform a full system upgrade including any."
+    echo "Kernel updates."
+    echo -n "Do you wish to continue? (Y|n) > "
+    read a
+    if [ "$a" = "y" ] || [ "$a" = "Y" ] || \
+    [ "$a" = "" ]; then
+        sudo apt-get update
+        sudo apt-get dist-upgrade
+        echo ""
+        echo "-- System update complete! Exiting..."
+        sleep 4s
+        exit
+    fi
+fi
+
+# Run interactive system update if no arguements supplied
+#===============================================================================
+if [ "$1" = "" ];then
+   exec x-terminal-emulator --command="system-update --upgrade"
+exit
+fi
+
+# Show help if arguement not recognised
+#===============================================================================
+echo "Oops! Invalid command. Have a clue..."
+exec system-update -h
+exit

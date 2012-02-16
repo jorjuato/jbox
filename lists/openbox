@@ -1,0 +1,15 @@
+# /usr/share/live/build/lists/openbox-desktop - package list for live-helper(7)
+
+# LH: Minimal CrunchBang like configuration
+
+#include <openbox-core>
+
+# openbox-env graphic tools
+network-manager-gnome tint2 notification-daemon 
+conky gmrun dwm-tools parcellite gsetroot fbxkb
+lxrandr lxterminal pcmanfm leafpad f-spot
+xfce4-power-manager
+
+# openbox-env command-line packages
+htop scrot mc moc rtorrent vim mutt elinks newsbeuter irssi
+
